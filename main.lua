@@ -60,19 +60,18 @@ function love.update(dt)
         local enemy = enemies[i]
         if checkCollision(enemy, player) then
             player:hit(enemy:getDmg())
-            if not player:alive() then
-                love.load()
-            end
         end
         for j, spell in ipairs(spells) do
             if checkCollision(enemy, spell) then
                 enemy:hit(spell:getDmg())
-                if not enemy:alive() then
-                    table.remove(enemies, i)
-                    break
-                end
             end
         end
+        if not enemy:alive() then
+            table.remove(enemies, i)
+        end
+    end
+    if not player:alive() then
+        love.load()
     end
     
     timer = timer + dt

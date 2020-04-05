@@ -68,16 +68,20 @@ function player:update(dt, field)
     end
     local newX = self.x + self.dx * dt
     local newY = self.y + self.dy * dt
-    if field:isWalkable(newX, newY) then
+    if field:isWalkable(newX, newY) >= 0 then
         self.x = newX
         self.y = newY
-    elseif field:isWalkable(self.x, newY) then       
+    elseif field:isWalkable(self.x, newY) >= 0 then       
         self.y = newY
         self.dx = 0
-    elseif field:isWalkable(newX, self.y) then 
+    elseif field:isWalkable(newX, self.y) >= 0 then 
         self.x = newX
         self.dy = 0
     end 
+    local t = field:isWalkable(self.x, self.y) 
+    if t > 0 then
+        self:hit(t)
+    end
 end
 
 function player:draw(mouseX, mouseY)
