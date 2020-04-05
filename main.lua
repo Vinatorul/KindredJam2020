@@ -36,18 +36,42 @@ function love.draw()
     camera:detach()
     love.graphics.setNewFont(32)
     love.graphics.setColor(0, 0, 0)
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+    love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 end
 
 function love.update(dt)
+
+    function checkCollision(first, second)
+        return (first.x - second.x) ^ 2 + (first.y - second.y) ^ 2 <= 
+            (first.r + second.r) ^ 2
+    end
+
     player:update(dt, field)
     for i = 1, #enemies do
-        enemies[i]:move(dt, field)
+        enemies[i]:update(dt, field)
     end
     for i = #spells, 1, -1 do
         spells[i]:update(dt)
         if not spells[i]:alive() then
             table.remove(spells, i)
+        end
+    end
+    for i = #enemies, 1, -1 do
+        local enemy = enemies[i]
+        if checkCollision(enemy, player) then
+            player:hit(enemy:getDmg())
+            if not player:alive() then
+                love.load()
+            end
+        end
+        for j, spell in ipairs(spells) do
+            if checkCollision(enemy, spell) then
+                enemy:hit(spell:getDmg())
+                if not enemy:alive() then
+                    table.remove(enemies, i)
+                    break
+                end
+            end
         end
     end
     
@@ -65,5 +89,17 @@ function love.mousereleased(x, y, button)
         local mouseX, mouseY = camera:mousePosition()
         local spell = player:castSpell(mouseX, mouseY)     
         table.insert(spells, spell)
+    end
+end
+
+function love.keypressed(key)
+    if key == "1" then
+        player:setSpell(1)
+    elseif key == "2" then
+        player:setSpell(2)
+    elseif key == "3" then
+        player:setSpell(3)
+    elseif key == "4" then
+        player:setSpell(4)
     end
 end

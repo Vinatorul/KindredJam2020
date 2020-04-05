@@ -7,10 +7,19 @@ local accSpeed = 500
 local function new(x, y)
     x = x or 0
     y = y or 0
-    local dx = 0
-    local dy = 0
-    local timer = 0
-    return setmetatable({x = x, y = y, dx = dx, dy = dy, timer = timer, keys = {}}, enemy)
+    return setmetatable({
+        x = x, 
+        y = y, 
+        r = 10,
+        dx = 0, 
+        dy = 0, 
+        timer = 0, 
+        keys = {},
+        hp = 100,
+        hpRegen = 1,
+        minDmg = 5,
+        maxDmg = 10,
+        invTimer = 0}, enemy)
 end
 
 function enemy:draw()
@@ -19,13 +28,16 @@ function enemy:draw()
         'fill',
         self.x,
         self.y,
-        10)
+        self.r)
+    love.graphics.print(math.floor(self.hp), self.x, self.y)
 end
 
-function enemy:move(dt, field)
-    timer = timer - dt
-    if timer < 0 then
-        timer = 0.2
+function enemy:update(dt, field)
+    self.timer = self.timer - dt
+    self.invTimer = self.invTimer - dt
+    self.hp = math.min(self.hp + self.hpRegen * dt, 100)
+    if self.timer < 0 then
+        self.timer = 0.2
         self.keys = {
             ["w"] = love.math.random(0, 1) == 1,
             ["s"] = love.math.random(0, 1) == 1, 
@@ -67,6 +79,21 @@ function enemy:move(dt, field)
         self.x = newX
         self.dy = 0
     end 
+end
+
+function enemy:getDmg()
+    return love.math.random(self.minDmg, self.maxDmg)
+end
+
+function enemy:hit(dmg)
+    if self.invTimer <= 0 then
+        self.hp = self.hp - dmg
+        self.invTimer = 0.1
+    end
+end
+
+function enemy:alive()
+    return self.hp > 0
 end
 
 return setmetatable({new = new},

@@ -10,17 +10,22 @@ local slowdownSpeed = 250
 local function new(x, y)
     x = x or 0
     y = y or 0
-    local dx = 0
-    local dy = 0
     return setmetatable({
         x = x, 
         y = y, 
-        dx = dx, 
-        dy = dy,
-        r = 30}, player)
+        dx = 0, 
+        dy = 0,
+        r = 30,
+        hp = 100,
+        invTimer = 0,
+        currentSpell = 1,
+        mana = 100,
+        manaRegen = 5}, player)
 end
 
 function player:update(dt, field)
+    self.invTimer = self.invTimer - dt 
+    self.mana = math.min(self.mana + self.manaRegen * dt, 100)
     if love.keyboard.isDown('w') then
         self.dy = self.dy - accSpeed * dt
     elseif love.keyboard.isDown('s') then
@@ -90,16 +95,61 @@ function player:draw(mouseX, mouseY)
     local eyeBallY = self.y + math.sin(angle) * math.min(distance, self.r - 5)
     love.graphics.setColor(1, 1, 1)
     love.graphics.circle('fill', eyeBallX, eyeBallY, 5)
+    love.graphics.print(math.floor(self.hp), self.x, self.y)
+    love.graphics.print(math.floor(self.mana), self.x, self.y + 25)
+    love.graphics.print(self.currentSpell, self.x, self.y + 50)
 end
 
 function player:castSpell(mouseX, mouseY)
     local distanceX = mouseX - self.x
     local distanceY = mouseY - self.y
-    local angle = math.atan2(distanceY, distanceX)  
-    return Spell(self.x + math.cos(angle) * self.r,
-        self.y + math.sin(angle) * self.r,
-        40,
-        0.1)
+    local distance = math.min(math.sqrt(distanceX^2 + distanceY^2), 100)
+    local angle = math.atan2(distanceY, distanceX)
+    if self.currentSpell == 1 and self.mana >= 10 then
+        self.mana = self.mana - 10
+        return Spell(self.x + math.cos(angle) * self.r,
+            self.y + math.sin(angle) * self.r,
+            40,
+            0.1,
+            20,
+            50)
+    elseif self.currentSpell == 2 and self.mana >= 15 then
+        self.mana = self.mana - 15
+        return Spell(self.x + math.cos(angle) * distance,
+            self.y + math.sin(angle) * distance,
+            30,
+            0.1,
+            15,
+            30)
+    elseif self.currentSpell == 3 and self.mana >= 15 then
+        self.mana = self.mana - 15
+        return Spell(self.x + math.cos(angle) * distance,
+            self.y + math.sin(angle) * distance,
+            20,
+            2,
+            15,
+            20,
+            700,
+            angle)
+    elseif self.currentSpell == 4 and self.mana >= 50 then
+        self.mana = self.mana - 50
+        self.hp = self.hp + 10
+    end
+end
+
+function player:setSpell(spellId)
+    self.currentSpell = spellId
+end
+
+function player:hit(dmg)
+    if self.invTimer <= 0 then
+        self.hp = self.hp - dmg
+        self.invTimer = 0.1
+    end
+end
+
+function player:alive()
+    return self.hp > 0
 end
 
 return setmetatable({new = new},
