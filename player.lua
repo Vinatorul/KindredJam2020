@@ -1,3 +1,5 @@
+Spell = require "spell"
+
 local player = {}
 player.__index = player
 
@@ -10,13 +12,18 @@ local function new(x, y)
     y = y or 0
     local dx = 0
     local dy = 0
-    return setmetatable({x = x, y = y, dx = dx, dy = dy}, player)
+    return setmetatable({
+        x = x, 
+        y = y, 
+        dx = dx, 
+        dy = dy,
+        r = 30}, player)
 end
 
-function player:move(keys, dt, field)
-    if keys['w'] then
+function player:update(dt, field)
+    if love.keyboard.isDown('w') then
         self.dy = self.dy - accSpeed * dt
-    elseif keys['s'] then
+    elseif love.keyboard.isDown('s') then
         self.dy = self.dy + accSpeed * dt
     elseif self.dy > 0 then
         self.dy = self.dy - slowdownSpeed * dt
@@ -29,9 +36,9 @@ function player:move(keys, dt, field)
             self.dy = 0
         end
     end
-    if keys['a'] then
+    if love.keyboard.isDown('a') then
         self.dx = self.dx - accSpeed * dt
-    elseif keys['d'] then
+    elseif love.keyboard.isDown('d') then
         self.dx = self.dx + accSpeed * dt
     elseif self.dx > 0 then
         self.dx = self.dx - slowdownSpeed * dt
@@ -68,13 +75,31 @@ function player:move(keys, dt, field)
     end 
 end
 
-function player:draw()
+function player:draw(mouseX, mouseY)
     love.graphics.setColor(0.5, 0.5, 0.5)
     love.graphics.circle(
         'fill',
         self.x,
         self.y,
-        30)
+        self.r)
+    local distanceX = mouseX - self.x
+    local distanceY = mouseY - self.y
+    local distance = math.sqrt(distanceX^2 + distanceY^2)
+    local angle = math.atan2(distanceY, distanceX)
+    local eyeBallX = self.x + math.cos(angle) * math.min(distance, self.r - 5)
+    local eyeBallY = self.y + math.sin(angle) * math.min(distance, self.r - 5)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.circle('fill', eyeBallX, eyeBallY, 5)
+end
+
+function player:castSpell(mouseX, mouseY)
+    local distanceX = mouseX - self.x
+    local distanceY = mouseY - self.y
+    local angle = math.atan2(distanceY, distanceX)  
+    return Spell(self.x + math.cos(angle) * self.r,
+        self.y + math.sin(angle) * self.r,
+        40,
+        0.1)
 end
 
 return setmetatable({new = new},
