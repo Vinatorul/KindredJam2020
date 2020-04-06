@@ -4,9 +4,22 @@ MainMenu = require "ui.mainMenu"
 function love.load()
     width, height, flags = love.window.getMode( )
     state = 1
-    game = Game()
     mainMenu = MainMenu()
 end
+
+function newGame(button)
+    game = Game()
+    state = 2
+    love.mouse.setGrabbed(true)
+end
+
+function continueGame(button)
+    if game and not game:over() then
+        state = 2
+        love.mouse.setGrabbed(true)
+    end
+end
+
 
 function love.draw()
     if state == 1 then
@@ -28,14 +41,18 @@ function love.update(dt)
     if state == 1 then
         mainMenu:update(dt)
     elseif state == 2 then
-        if not game:update(dt) then
+        game:update(dt)
+        if game:over() then
             state = 1
-        end 
-    elseif state == 3 then
-        if not game:update(dt) then
-            state = 1
+            love.mouse.setGrabbed(false)
         end
+    elseif state == 3 then
+        game:update(dt)
         mainMenu:update(dt)
+        if game:over() then
+            state = 1
+            love.mouse.setGrabbed(false)
+        end
     end
 end
 
@@ -53,8 +70,10 @@ function love.keypressed(key)
             love.event.quit()
         elseif state == 2 then
             state = 3
+            love.mouse.setGrabbed(false)
         elseif state == 3 then
             state = 2
+            love.mouse.setGrabbed(true)
         end
     else
         if state == 1 or state == 3 then

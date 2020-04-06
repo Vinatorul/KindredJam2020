@@ -3,21 +3,19 @@ Button = require "ui.button"
 local mainMenu = {}
 mainMenu.__index = mainMenu
 
-local function newGame()
-    state = 2
-end
-
 local function openSettings()
     
 end
 
 local function new()
     local buttons = {}
-    local newGame = Button(100, 100, 200, 40, "New game", newGame)
+    local continue = Button(300, 200, 300, 40, "Continue", continueGame)
+    table.insert(buttons, continue)
+    local newGame = Button(300, 250, 300, 40, "New game", newGame)
     table.insert(buttons, newGame)
-    local openSettings = Button(100, 200, 200, 40, "Settings", openSettings)
+    local openSettings = Button(300, 300, 300, 40, "Settings", openSettings)
     table.insert(buttons, openSettings)
-    local exitGame = Button(100, 300, 200, 40, "Exit game", love.event.quit)
+    local exitGame = Button(300, 350, 300, 40, "Exit game", love.event.quit)
     table.insert(buttons, exitGame)
     return setmetatable({
         buttons = buttons
@@ -25,6 +23,8 @@ local function new()
 end
 
 function mainMenu:draw()
+    love.graphics.setColor(0, 0, 0, 0.9)
+    love.graphics.rectangle('fill', 250, 150, 350, 300)
     for i = 1, #self.buttons do
         self.buttons[i]:draw()
     end

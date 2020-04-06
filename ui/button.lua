@@ -13,8 +13,8 @@ local function new(x, y, w, h, text, callback)
 end
 
 function button:draw()
-    love.graphics.setColor(0.7, 0.7, 0.7)
-    love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+    -- love.graphics.setColor(0.7, 0.7, 0.7)
+    -- love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
     love.graphics.setColor(1, 1, 1)
     love.graphics.setNewFont(32)
     love.graphics.print(self.text, self.x, self.y)

@@ -110,7 +110,7 @@ function player:castSpell(mouseX, mouseY)
     local distanceY = mouseY - self.y
     local distance = math.min(math.sqrt(distanceX^2 + distanceY^2), 100)
     local angle = math.atan2(distanceY, distanceX)
-    if self.currentSpell == 1 and self.mana >= 10 then
+    if self.currentSpell == 2 and self.mana >= 10 then
         self.mana = self.mana - 10
         return Spell(self.x + math.cos(angle) * self.r,
             self.y + math.sin(angle) * self.r,
@@ -118,7 +118,7 @@ function player:castSpell(mouseX, mouseY)
             0.1,
             20,
             50)
-    elseif self.currentSpell == 2 and self.mana >= 15 then
+    elseif self.currentSpell == 1 and self.mana >= 15 then
         self.mana = self.mana - 15
         return Spell(self.x + math.cos(angle) * distance,
             self.y + math.sin(angle) * distance,

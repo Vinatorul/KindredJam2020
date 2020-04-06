@@ -2,6 +2,7 @@ Camera = require "camera"
 Player = require "player"
 Field = require "field"
 Enemy = require "enemy"
+SkillTree = require "ui.skillTree"
 
 local game = {}
 game.__index = game
@@ -20,7 +21,9 @@ local function new()
         player = player, 
         field = field,
         enemies = enemies,
-        spells = spells, }, game)
+        spells = spells,
+        skillTreeOpened = false,
+        skillTree = SkillTree()}, game)
 end
 
 function game:draw()
@@ -35,11 +38,18 @@ function game:draw()
         local mouseX, mouseY = self.camera:mousePosition()
         self.player:draw(mouseX, mouseY)
     end
-    self.camera:lockWindow(self.player.x, self.player.y, 390, 410, 290, 310)
+    local lockX, lockY = self.player.x, self.player.y
+    if self.skillTreeOpened then
+        lockX = lockX - self.skillTree.w / 2
+    end
+    self.camera:lockWindow(lockX, lockY, 390, 410, 290, 310)
     self.camera:zoomTo(1)
     self.camera:attach()
     drawWorld()
     self.camera:detach()
+    if self.skillTreeOpened then
+        self.skillTree:draw()
+    end
 end
 
 function game:update(dt)
@@ -73,10 +83,10 @@ function game:update(dt)
             table.remove(self.enemies, i)
         end
     end
-    if not self.player:alive() then
-        return false
-    end
-    return true
+end
+
+function game:over()
+    return not self.player:alive()
 end
 
 function game:mousereleased(button)
@@ -96,6 +106,8 @@ function game:keypressed(key)
         self.player:setSpell(3)
     elseif key == "4" then
         self.player:setSpell(4)
+    elseif key == "u" then
+        self.skillTreeOpened = not self.skillTreeOpened
     end
 end
 
