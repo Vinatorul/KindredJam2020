@@ -1,4 +1,5 @@
 Spell = require "spell"
+require "utils.keyboard"
 
 local player = {}
 player.__index = player
@@ -26,9 +27,9 @@ end
 function player:update(dt, field)
     self.invTimer = self.invTimer - dt 
     self.mana = math.min(self.mana + self.manaRegen * dt, 100)
-    if love.keyboard.isDown('w') then
+    if isKeyDown('w') then
         self.dy = self.dy - accSpeed * dt
-    elseif love.keyboard.isDown('s') then
+    elseif isKeyDown('s') then
         self.dy = self.dy + accSpeed * dt
     elseif self.dy > 0 then
         self.dy = self.dy - slowdownSpeed * dt
@@ -41,9 +42,9 @@ function player:update(dt, field)
             self.dy = 0
         end
     end
-    if love.keyboard.isDown('a') then
+    if isKeyDown('a') then
         self.dx = self.dx - accSpeed * dt
-    elseif love.keyboard.isDown('d') then
+    elseif isKeyDown('d') then
         self.dx = self.dx + accSpeed * dt
     elseif self.dx > 0 then
         self.dx = self.dx - slowdownSpeed * dt
