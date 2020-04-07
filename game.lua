@@ -76,7 +76,8 @@ function game:update(dt)
         end
         for j, spell in ipairs(self.spells) do
             if checkCollision(enemy, spell) then
-                enemy:hit(spell:getDmg())
+                local dmg = enemy:hit(spell:getDmg())     
+                self.player:hit(dmg)
             end
         end
         if not enemy:alive() then
@@ -104,7 +105,7 @@ function game:keypressed(key)
         self.player:setSpell(2)
     elseif key == "3" then
         self.player:setSpell(3)
-    elseif key == "u" then
+    elseif key == "f" then
         self.skillTreeOpened = not self.skillTreeOpened
     end
 end

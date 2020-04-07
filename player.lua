@@ -57,7 +57,7 @@ local function new(x, y)
         currentSpell = 1,
         mana = 100,
         manaRegen = 5,
-        skills = {spells = Set({1, 2})}}, player)
+        skills = {spells = Set({1, 2, 3})}}, player)
 end
 
 function player:update(dt, field)
@@ -117,7 +117,7 @@ function player:update(dt, field)
     end 
     local t = field:isWalkable(self.x, self.y) 
     if t > 0 then
-        self:hit(t)
+        self:hit(-t)
     end
 end
 
@@ -186,7 +186,7 @@ function player:hit(dmg)
 end
 
 function player:alive()
-    return self.hp > 0
+    return self.hp > 0 and self.hp < 200
 end
 
 return setmetatable({new = new},

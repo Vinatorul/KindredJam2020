@@ -17,8 +17,8 @@ local function new(x, y)
         keys = {},
         hp = 100,
         hpRegen = 1,
-        minDmg = 5,
-        maxDmg = 10,
+        minDmg = -5,
+        maxDmg = -10,
         invTimer = 0}, enemy)
 end
 
@@ -89,7 +89,9 @@ function enemy:hit(dmg)
     if self.invTimer <= 0 then
         self.hp = self.hp - dmg
         self.invTimer = 0.1
+        return dmg
     end
+    return 0
 end
 
 function enemy:alive()
