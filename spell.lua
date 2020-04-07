@@ -1,18 +1,7 @@
 local spell = {}
 spell.__index = spell
 
-local maxSpeed = 350
-local accSpeed = 500
-
 local function new(x, y, r, time, minDmg, maxDmg, speed, angle)
-    x = x or 0
-    y = y or 0
-    r = r or 30
-    time = time or 1
-    minDmg = minDmg or 20
-    maxDmg = maxDmg or 50
-    speed = speed or 0
-    angle = angle or 0
     return setmetatable({
         x = x, 
         y = y, 

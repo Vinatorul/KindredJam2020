@@ -104,8 +104,6 @@ function game:keypressed(key)
         self.player:setSpell(2)
     elseif key == "3" then
         self.player:setSpell(3)
-    elseif key == "4" then
-        self.player:setSpell(4)
     elseif key == "u" then
         self.skillTreeOpened = not self.skillTreeOpened
     end

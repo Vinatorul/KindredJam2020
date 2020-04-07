@@ -1,5 +1,6 @@
 Spell = require "spell"
 require "utils.keyboard"
+Set = require "utils.set"
 
 local player = {}
 player.__index = player
@@ -7,6 +8,40 @@ player.__index = player
 local maxSpeed = 150
 local accSpeed = 500
 local slowdownSpeed = 250
+local playerRadius = 30
+local spells = {
+    [1] = {
+        maxDistance = 100,
+        r = 30, 
+        time = 0.1, 
+        minDmg = 15, 
+        maxDmg = 30, 
+        speed = 0,
+        manaCost = 15, 
+    },
+    [2] = {
+        maxDistance = playerRadius,
+        r = 40, 
+        time = 0.1, 
+        minDmg = 20, 
+        maxDmg = 50, 
+        speed = 0, 
+        manaCost = 10,
+    },
+    [3] = {
+        maxDistance = playerRadius,
+        r = 20, 
+        time = 2, 
+        minDmg = 15, 
+        maxDmg = 20, 
+        speed = 700,
+        manaCost = 15, 
+    },
+}
+
+local allSkills = {
+    spells = Set({1, 2, 3})
+}
 
 local function new(x, y)
     x = x or 0
@@ -16,12 +51,13 @@ local function new(x, y)
         y = y, 
         dx = 0, 
         dy = 0,
-        r = 30,
+        r = playerRadius,
         hp = 100,
         invTimer = 0,
         currentSpell = 1,
         mana = 100,
-        manaRegen = 5}, player)
+        manaRegen = 5,
+        skills = {spells = Set({1, 2})}}, player)
 end
 
 function player:update(dt, field)
@@ -105,45 +141,41 @@ function player:draw(mouseX, mouseY)
     love.graphics.print(self.currentSpell, self.x, self.y + 50)
 end
 
+local function castSpell(spellId, x, y, angle, mouseDistance)
+    local spellInfo = spells[spellId]
+    local distance = math.min(mouseDistance, spellInfo.maxDistance)
+    return Spell(
+        x + math.cos(angle) * distance, 
+        y + math.sin(angle) * distance, 
+        spellInfo.r, 
+        spellInfo.time, 
+        spellInfo.minDmg, 
+        spellInfo.maxDmg, 
+        spellInfo.speed, 
+        angle
+    )
+end
+
+function player:canCastSpell()
+    return self.mana >= spells[self.currentSpell].manaCost
+end
+
 function player:castSpell(mouseX, mouseY)
     local distanceX = mouseX - self.x
     local distanceY = mouseY - self.y
-    local distance = math.min(math.sqrt(distanceX^2 + distanceY^2), 100)
+    local distance = math.sqrt(distanceX^2 + distanceY^2)
     local angle = math.atan2(distanceY, distanceX)
-    if self.currentSpell == 2 and self.mana >= 10 then
-        self.mana = self.mana - 10
-        return Spell(self.x + math.cos(angle) * self.r,
-            self.y + math.sin(angle) * self.r,
-            40,
-            0.1,
-            20,
-            50)
-    elseif self.currentSpell == 1 and self.mana >= 15 then
-        self.mana = self.mana - 15
-        return Spell(self.x + math.cos(angle) * distance,
-            self.y + math.sin(angle) * distance,
-            30,
-            0.1,
-            15,
-            30)
-    elseif self.currentSpell == 3 and self.mana >= 15 then
-        self.mana = self.mana - 15
-        return Spell(self.x + math.cos(angle) * distance,
-            self.y + math.sin(angle) * distance,
-            20,
-            2,
-            15,
-            20,
-            700,
-            angle)
-    elseif self.currentSpell == 4 and self.mana >= 50 then
-        self.mana = self.mana - 50
-        self.hp = self.hp + 10
+    if self:canCastSpell() then
+        self.mana = self.mana - spells[self.currentSpell].manaCost
+        return castSpell(self.currentSpell, self.x, self.y, angle, distance)
     end
 end
 
 function player:setSpell(spellId)
-    self.currentSpell = spellId
+    if self.skills.spells:contains(spellId) then
+        self.currentSpell = spellId
+        return
+    end
 end
 
 function player:hit(dmg)
