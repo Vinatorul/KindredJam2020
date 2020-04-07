@@ -23,7 +23,7 @@ local function new()
         enemies = enemies,
         spells = spells,
         skillTreeOpened = false,
-        skillTree = SkillTree()}, game)
+        skillTree = nil}, game)
 end
 
 function game:draw()
@@ -91,10 +91,15 @@ function game:over()
 end
 
 function game:mousereleased(button)
-    if button == 1 then
+    local mouseWndX, mouseWndY = love.mouse.getPosition()
+    if self.skillTreeOpened and mouseWndX <= self.skillTree.w then
+        self.skillTree:mousereleased(mouseWndX, mouseWndY, button)
+    elseif button == 1 then
         local mouseX, mouseY = self.camera:mousePosition()
         local spell = self.player:castSpell(mouseX, mouseY)     
-        table.insert(self.spells, spell)
+        if spell ~= nil then
+            table.insert(self.spells, spell)
+        end
     end
 end
 
@@ -107,6 +112,9 @@ function game:keypressed(key)
         self.player:setSpell(3)
     elseif key == "f" then
         self.skillTreeOpened = not self.skillTreeOpened
+        if self.skillTree == nil then
+            self.skillTree = SkillTree(openSkill2, openSkill3)
+        end
     end
 end
 

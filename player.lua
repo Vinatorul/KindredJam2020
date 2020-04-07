@@ -57,7 +57,7 @@ local function new(x, y)
         currentSpell = 1,
         mana = 100,
         manaRegen = 5,
-        skills = {spells = Set({1, 2, 3})}}, player)
+        skills = Set({1})}, player)
 end
 
 function player:update(dt, field)
@@ -172,7 +172,7 @@ function player:castSpell(mouseX, mouseY)
 end
 
 function player:setSpell(spellId)
-    if self.skills.spells:contains(spellId) then
+    if self.skills:contains(spellId) then
         self.currentSpell = spellId
         return
     end
@@ -187,6 +187,10 @@ end
 
 function player:alive()
     return self.hp > 0 and self.hp < 200
+end
+
+function player:addSkill(skillID)
+    self.skills:add(skillID)
 end
 
 return setmetatable({new = new},

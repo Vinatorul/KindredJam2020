@@ -3,8 +3,12 @@ Button = require "ui.button"
 local skillTree = {}
 skillTree.__index = skillTree
 
-local function new()
+local function new(f1, f2)
     local buttons = {}
+    local s1 = Button(25, 25, 250, 40, "Skill 2", f1)
+    table.insert(buttons, s1)
+    local s2 = Button(25, 75, 250, 40, "Skill 3", f2)
+    table.insert(buttons, s2)
     return setmetatable({
         w = 350,
         h = 600,
