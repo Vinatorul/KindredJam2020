@@ -20,15 +20,6 @@ function continueGame(button)
     end
 end
 
-function openSkill2()
-    game.player:addSkill(2)
-end
-
-function openSkill3()
-    game.player:addSkill(3)
-end
-
-
 function love.draw()
     if state == 1 then
         mainMenu:draw()

@@ -2,7 +2,7 @@ Camera = require "camera"
 Player = require "player"
 Field = require "field"
 Enemy = require "enemy"
-SkillTree = require "ui.skillTree"
+SkillTreeUI = require "ui.skillTree"
 
 local game = {}
 game.__index = game
@@ -21,9 +21,8 @@ local function new()
         player = player, 
         field = field,
         enemies = enemies,
-        spells = spells,
-        skillTreeOpened = false,
-        skillTree = nil}, game)
+        spells = spells
+    }, game)
 end
 
 function game:draw()
@@ -39,16 +38,16 @@ function game:draw()
         self.player:draw(mouseX, mouseY)
     end
     local lockX, lockY = self.player.x, self.player.y
-    if self.skillTreeOpened then
-        lockX = lockX - self.skillTree.w / 2
+    if SkillTreeUI.isOpened() then
+        lockX = lockX - SkillTreeUI.getWidth() / 2
     end
     self.camera:lockWindow(lockX, lockY, 390, 410, 290, 310)
     self.camera:zoomTo(1)
     self.camera:attach()
     drawWorld()
     self.camera:detach()
-    if self.skillTreeOpened then
-        self.skillTree:draw()
+    if SkillTreeUI.isOpened() then
+        SkillTreeUI.draw()
     end
 end
 
@@ -84,6 +83,9 @@ function game:update(dt)
             table.remove(self.enemies, i)
         end
     end
+    if SkillTreeUI.isOpened() then
+        SkillTreeUI.update(dt)
+    end
 end
 
 function game:over()
@@ -92,8 +94,8 @@ end
 
 function game:mousereleased(button)
     local mouseWndX, mouseWndY = love.mouse.getPosition()
-    if self.skillTreeOpened and mouseWndX <= self.skillTree.w then
-        self.skillTree:mousereleased(mouseWndX, mouseWndY, button)
+    if SkillTreeUI.isOpened() and mouseWndX <= SkillTreeUI.getWidth() then
+        SkillTreeUI.mousereleased(mouseWndX, mouseWndY, button)
     elseif button == 1 then
         local mouseX, mouseY = self.camera:mousePosition()
         local spell = self.player:castSpell(mouseX, mouseY)     
@@ -111,9 +113,10 @@ function game:keypressed(key)
     elseif key == "3" then
         self.player:setSpell(3)
     elseif key == "f" then
-        self.skillTreeOpened = not self.skillTreeOpened
-        if self.skillTree == nil then
-            self.skillTree = SkillTree(openSkill2, openSkill3)
+        if SkillTreeUI.isOpened() then
+            SkillTreeUI.close()
+        else
+            SkillTreeUI.open(self.player.skillTree)
         end
     end
 end

@@ -32,6 +32,8 @@ end
 
 function mainMenu:update(dt)
     for i = 1, #self.buttons do
+        self.buttons[i]:setEnabled(true)
+        self.buttons[i]:setGrayed(false)
         self.buttons[i]:update(dt)
     end
 end
