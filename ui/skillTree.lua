@@ -16,17 +16,17 @@ local skillStates = {
 }
 
 local function f1()
-    playerSkillTree:addSkill(2)
+    playerSkillTree:addSkill(Constst.skillTag1)
 end
 
 local function f2()
-    playerSkillTree:addSkill(3)
+    playerSkillTree:addSkill(Constst.skillTag2)
 end
 
 local function new()
-    local s1 = Button(25, 25, 250, 40, "123", f1)
+    local s1 = Button(25, 50, 250, 40, Constst.skillTag1, f1)
     table.insert(buttons, s1)
-    local s2 = Button(25, 75, 250, 40, "456", f2)
+    local s2 = Button(25, 100, 250, 40, Constst.skillTag2, f2)
     table.insert(buttons, s2)
 end
 

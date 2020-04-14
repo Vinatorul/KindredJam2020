@@ -3,6 +3,7 @@ Player = require "player"
 Field = require "field"
 Enemy = require "enemy"
 SkillTreeUI = require "ui.skillTree"
+Constst = require "utils.consts"
 
 local game = {}
 game.__index = game
@@ -107,11 +108,11 @@ end
 
 function game:keypressed(key)
     if key == "1" then
-        self.player:setSpell(1)
+        self.player:setSpell(Constst.parent)
     elseif key == "2" then
-        self.player:setSpell(2)
+        self.player:setSpell(Constst.skillTag1)
     elseif key == "3" then
-        self.player:setSpell(3)
+        self.player:setSpell(Constst.skillTag2)
     elseif key == "f" then
         if SkillTreeUI.isOpened() then
             SkillTreeUI.close()

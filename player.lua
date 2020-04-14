@@ -1,6 +1,7 @@
 Spell = require "spell"
 require "utils.keyboard"
 SkillTree = require "skill_tree"
+Constst = require "utils.consts"
 
 local player = {}
 player.__index = player
@@ -10,7 +11,7 @@ local accSpeed = 500
 local slowdownSpeed = 250
 local playerRadius = 30
 local spells = {
-    [1] = {
+    [Constst.parent] = {
         maxDistance = 100,
         r = 30, 
         time = 0.1, 
@@ -19,7 +20,7 @@ local spells = {
         speed = 0,
         manaCost = 15, 
     },
-    [2] = {
+    [Constst.skillTag1] = {
         maxDistance = playerRadius,
         r = 40, 
         time = 0.1, 
@@ -28,7 +29,7 @@ local spells = {
         speed = 0, 
         manaCost = 10,
     },
-    [3] = {
+    [Constst.skillTag2] = {
         maxDistance = playerRadius,
         r = 20, 
         time = 2, 
@@ -37,10 +38,6 @@ local spells = {
         speed = 700,
         manaCost = 15, 
     },
-}
-
-local allSkills = {
-    spells = Set({1, 2, 3})
 }
 
 local function new(x, y)
@@ -54,7 +51,7 @@ local function new(x, y)
         r = playerRadius,
         hp = 100,
         invTimer = 0,
-        currentSpell = 1,
+        currentSpell = Constst.parent,
         mana = 100,
         manaRegen = 5,
         skillTree = SkillTree()}, player)
@@ -141,8 +138,8 @@ function player:draw(mouseX, mouseY)
     love.graphics.print(self.currentSpell, self.x, self.y + 50)
 end
 
-local function castSpell(spellId, x, y, angle, mouseDistance)
-    local spellInfo = spells[spellId]
+local function castSpell(spellTag, x, y, angle, mouseDistance)
+    local spellInfo = spells[spellTag]
     local distance = math.min(mouseDistance, spellInfo.maxDistance)
     return Spell(
         x + math.cos(angle) * distance, 
@@ -171,9 +168,9 @@ function player:castSpell(mouseX, mouseY)
     end
 end
 
-function player:setSpell(spellId)
-    if self.skillTree:isSkillLearned(spellId) then
-        self.currentSpell = spellId
+function player:setSpell(spellTag)
+    if self.skillTree:isSkillLearned(spellTag) then
+        self.currentSpell = spellTag
     end
 end
 

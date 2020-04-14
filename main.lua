@@ -7,13 +7,13 @@ function love.load()
     mainMenu = MainMenu()
 end
 
-function newGame(button)
+function newGame()
     game = Game()
     state = 2
     love.mouse.setGrabbed(true)
 end
 
-function continueGame(button)
+function continueGame()
     if game and not game:over() then
         state = 2
         love.mouse.setGrabbed(true)

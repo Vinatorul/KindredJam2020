@@ -1,13 +1,13 @@
 local button = {}
 button.__index = button
 
-local function new(x, y, w, h, text, callback)
+local function new(x, y, w, h, tag, callback)
     return setmetatable({
         x = x,
         y = y,
         w = w,
         h = h,
-        text = text,
+        tag = tag,
         callback = callback,
         enabled = false,
         grayed = true,
@@ -19,7 +19,7 @@ function button:draw()
     -- love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
     love.graphics.setColor(1, 1, 1)
     love.graphics.setNewFont(32)
-    love.graphics.print(self.text, self.x, self.y)
+    love.graphics.print(self.tag, self.x, self.y)
     if self.grayed then
         love.graphics.setColor(0, 0, 0, 0.5)
         love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)

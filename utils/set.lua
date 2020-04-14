@@ -48,5 +48,14 @@ function set:intersection(other)
     return Set(list)
 end
 
+function set:isSubset(other)
+    for item in pairs(self.innerData) do
+        if not other:contains(item) then
+            return false
+        end
+    end
+    return true
+end
+
 return setmetatable({new = new},
     {__call = function(_, ...) return new(...) end})
