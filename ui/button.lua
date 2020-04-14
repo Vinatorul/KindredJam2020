@@ -15,8 +15,10 @@ local function new(x, y, w, h, tag, callback)
 end
 
 function button:draw()
-    -- love.graphics.setColor(0.7, 0.7, 0.7)
-    -- love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+    if self.enabled then
+        love.graphics.setColor(1, 1, 1, 0.3)
+        love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
+    end
     love.graphics.setColor(1, 1, 1)
     love.graphics.setNewFont(32)
     love.graphics.print(self.tag, self.x, self.y)

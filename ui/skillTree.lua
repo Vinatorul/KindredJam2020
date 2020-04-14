@@ -23,16 +23,24 @@ local function f2()
     playerSkillTree:addSkill(Constst.skillTag2)
 end
 
+local function f3()
+    playerSkillTree:addSkill(Constst.skillTag3)
+end
+
 local function new()
-    local s1 = Button(25, 50, 250, 40, Constst.skillTag1, f1)
+    local s1 = Button(25, 100, 250, 40, Constst.skillTag1, f1)
     table.insert(buttons, s1)
-    local s2 = Button(25, 100, 250, 40, Constst.skillTag2, f2)
+    local s2 = Button(50, 150, 250, 40, Constst.skillTag2, f2)
     table.insert(buttons, s2)
+    local s3 = Button(50, 200, 250, 40, Constst.skillTag3, f3)
+    table.insert(buttons, s3)
 end
 
 function skillTree.draw()
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle('fill', 0, 0, w, h)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("SP "..playerSkillTree:getSkillPoints(), 25, 50)
     for i = 1, #buttons do
         buttons[i]:draw()
     end

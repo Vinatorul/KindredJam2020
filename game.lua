@@ -17,6 +17,7 @@ local function new()
         enemies[i] = Enemy(love.math.random(1000), love.math.random(1000))
     end
     local spells = {}
+    SkillTreeUI.close()
     return setmetatable({
         camera = camera, 
         player = player, 
